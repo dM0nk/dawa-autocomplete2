@@ -162,7 +162,6 @@ export class AutocompleteController {
   }
 
   _handleResponse(request, result) {
-    console.log(request, result);
     if (request.selected) {
       if (result.length === 1) {
         const item = result[0];
