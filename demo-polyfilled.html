@@ -1,58 +1,61 @@
 <!doctype html>
 <html>
-<head>
-    <title>DAWA autocomplete - demo</title>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="css/dawa-autocomplete2.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
-    <script src="dist/dawa-autocomplete2.js"></script>
-    <style>
-        body {
-            font-family: "Helvetica Neue",Arial,sans-serif;
-        }
-    </style>
-</head>
-<body>
-<h3>Default options</h3>
-<div class="dawa-autocomplete-container">
-    <input id="autocomplete-default">
-</div>
 
-<h3>adgangsadresserOnly=true</h3>
-<div class="dawa-autocomplete-container">
+<head>
+  <title>DAWA autocomplete - demo</title>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="css/dawa-autocomplete2.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/2.0.3/fetch.min.js"></script>
+  <script src="dist/dawa-autocomplete2.js"></script>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>Default options</h3>
+  <div class="dawa-autocomplete-container">
+    <input id="autocomplete-default">
+  </div>
+
+  <h3>adgangsadresserOnly=true</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-adgangsadresser-only">
-</div>
-<h3>minLength=3</h3>
-<div class="dawa-autocomplete-container">
+  </div>
+  <h3>minLength=3</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-minlength-3">
-</div>
-<h3>kommunekode=101</h3>
-<div class="dawa-autocomplete-container">
+  </div>
+  <h3>kommunekode=101</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-kommunekode-101">
-</div>
-<h3>multiline=true</h3>
-<div class="dawa-autocomplete-container">
+  </div>
+  <h3>multiline=true</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-multiline">
-</div>
-<h3>supplerendebynavn=false</h3>
-<div class="dawa-autocomplete-container">
+  </div>
+  <h3>supplerendebynavn=false</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-supplerendebynavn-false">
-</div>
-<h3>stormodtagerpostnumre=true</h3>
-<div class="dawa-autocomplete-container">
+  </div>
+  <h3>stormodtagerpostnumre=true</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-stormodtagerpostnumre-true">
-</div>
-<h3>addressId</h3>
-<div class="dawa-autocomplete-container">
+  </div>
+  <h3>addressId</h3>
+  <div class="dawa-autocomplete-container">
     <input id="autocomplete-address-id">
-</div>
+  </div>
 
 </body>
 <script>
-//  const BASE_URL = 'http://localhost:3000';
+  //  const BASE_URL = 'http://localhost:3000';
   const BASE_URL = 'https://dawa.aws.dk';
+  /*
   dawaAutocomplete.dawaAutocomplete(document.getElementById("autocomplete-default"), {
     baseUrl:BASE_URL,
     select: function(selected) {
@@ -102,21 +105,24 @@
     },
     supplerendebynavn: false
   });
+   */
   dawaAutocomplete.dawaAutocomplete(document.getElementById("autocomplete-stormodtagerpostnumre-true"), {
-    baseUrl:BASE_URL,
-    select: function(selected) {
+    baseUrl: BASE_URL,
+    select: function (selected) {
       console.log('Selected address:');
       console.dir(selected);
     },
-    stormodtagerpostnumre: true
+    completeType: "adresse"
   });
+
   dawaAutocomplete.dawaAutocomplete(document.getElementById("autocomplete-address-id"), {
-    baseUrl:BASE_URL,
-    select: function(selected) {
+    baseUrl: BASE_URL,
+    select: function (selected) {
       console.log('Selected address:');
       console.dir(selected);
     },
-    id: 'f5a68d45-935b-48d6-8d11-6363327ca1ae'
+    completeType: "postnummer"
   });
 </script>
+
 </html>
