@@ -10,7 +10,8 @@ export function dawaAutocomplete(inputElm, options) {
     'fuzzy',
     'stormodtagerpostnumre',
     'supplerendebynavn',
-    'completeType'
+    'completeType',
+    'showCity'
   ].reduce((memo, optionName) => {
     if (options.hasOwnProperty(optionName)) {
       memo[optionName] = options[optionName];
@@ -36,7 +37,38 @@ export function dawaAutocomplete(inputElm, options) {
   });
   controller.setRenderCallback(suggestions => ui.setSuggestions(suggestions));
   controller.setSelectCallback(selected => {
-    ui.selectAndClose(selected.tekst);
+    if ('completeType' in controllerOptions) {
+      if (controllerOptions.completeType === 'postnummer') {
+        if ('showCity' in controllerOptions && controllerOptions.showCity === true) {
+          ui.selectAndClose(selected.tekst);
+        } else {
+          ui.selectAndClose(selected.postnummer.nr);
+        }
+      }
+
+      if (controllerOptions.completeType === 'adresse') {
+        if ('showCity' in controllerOptions && controllerOptions.showCity === false) {
+          const streetNameAndNumber = selected.data.vejnavn + ' ' + selected.data.husnr;
+          const floor = selected.data.etage ? selected.data.etage : null;
+          const door = selected.data.dør ? selected.data.dør : null;
+
+          var street = streetNameAndNumber;
+
+          if (floor !== null) {
+            street += ', ' + floor;
+          }
+
+          if (door !== null) {
+            street += '. ' + door;
+          }
+
+          ui.selectAndClose(street);
+        }
+      }
+    } else {
+      ui.selectAndClose(selected.tekst);
+    }
+
     options.select(selected);
   });
   controller.setInitialRenderCallback(text => ui.selectAndClose(text));

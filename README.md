@@ -6,6 +6,7 @@ Therefore is the readme files pretty much identical...
 
 ```
 RELEASE NOTES:
+0.14.4: Added showCity param
 0.14.3: Fix selection bug on 'postnummer' type.
 0.14.2: Remove debug text in console
 0.14.1: Updated readme file
@@ -114,14 +115,11 @@ CSS rules to the page in order to ensure that the suggestions are rendered corre
 The component is initialized using JavaScript:
 
 ```javascript
-dawaAutocomplete.dawaAutocomplete(
-  document.getElementById('dawa-autocomplete-input'),
-  {
-    select: function(selected) {
-      console.log('Valgt adresse: ' + selected.tekst);
-    }
+dawaAutocomplete.dawaAutocomplete(document.getElementById('dawa-autocomplete-input'), {
+  select: function(selected) {
+    console.log('Valgt adresse: ' + selected.tekst);
   }
-);
+});
 ```
 
 ### Usage via NPM

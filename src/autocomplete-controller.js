@@ -23,6 +23,7 @@ const defaultOptions = {
   },
   type: 'adresse',
   completeType: 'adresse',
+  showCity: true,
   baseUrl: 'https://dawa.aws.dk',
   adgangsadresserOnly: false,
   stormodtagerpostnumre: true,
@@ -45,14 +46,7 @@ export class AutocompleteController {
     this.selected = null;
   }
 
-  _getAutocompleteResponse(
-    text,
-    caretpos,
-    skipVejnavn,
-    adgangsadresseid,
-    supplerendebynavn,
-    stormodtagerpostnumre
-  ) {
+  _getAutocompleteResponse(text, caretpos, skipVejnavn, adgangsadresseid, supplerendebynavn, stormodtagerpostnumre) {
     const params = Object.assign({}, this.options.params, {
       q: text,
       type: this.options.type,
@@ -78,16 +72,10 @@ export class AutocompleteController {
         per_side: 5
       };
 
-      return this.options.fetchImpl(
-        `${this.options.baseUrl}/postnumre/autocomplete`,
-        params
-      );
+      return this.options.fetchImpl(`${this.options.baseUrl}/postnumre/autocomplete`, params);
     }
 
-    return this.options.fetchImpl(
-      `${this.options.baseUrl}/autocomplete`,
-      params
-    );
+    return this.options.fetchImpl(`${this.options.baseUrl}/autocomplete`, params);
   }
 
   _scheduleRequest(request) {
@@ -136,14 +124,8 @@ export class AutocompleteController {
       };
       return this.options
         .fetchImpl(`${this.options.baseUrl}/autocomplete`, params)
-        .then(
-          result => this._handleResponse(request, result),
-          error => this._handleFailedRequest(request, error)
-        );
-    } else if (
-      request.selected ||
-      request.text.length >= this.options.minLength
-    ) {
+        .then(result => this._handleResponse(request, result), error => this._handleFailedRequest(request, error));
+    } else if (request.selected || request.text.length >= this.options.minLength) {
       this._getAutocompleteResponse(
         text,
         caretpos,
@@ -151,10 +133,7 @@ export class AutocompleteController {
         adgangsadresseid,
         this.options.supplerendebynavn,
         this.options.stormodtagerpostnumre
-      ).then(
-        result => this._handleResponse(request, result),
-        error => this._handleFailedRequest(request, error)
-      );
+      ).then(result => this._handleResponse(request, result), error => this._handleFailedRequest(request, error));
     } else {
       this._handleResponse(request, []);
     }

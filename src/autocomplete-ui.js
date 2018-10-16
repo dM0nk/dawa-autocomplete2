@@ -1,12 +1,4 @@
-import {
-  elementOpen,
-  elementClose,
-  elementVoid,
-  text,
-  patch,
-  attributes,
-  applyProp
-} from 'incremental-dom';
+import { elementOpen, elementClose, elementVoid, text, patch, attributes, applyProp } from 'incremental-dom';
 
 attributes.caretpos = (element, name, value) => {
   element.setSelectionRange(value, value);
@@ -16,30 +8,17 @@ attributes.value = applyProp;
 
 const renderIncrementalDOM = (data, onSelect, multiline) => {
   if (data.suggestions.length > 0 && data.focused) {
-    elementOpen('ul', '', [
-      'class',
-      'dawa-autocomplete-suggestions',
-      'role',
-      'listbox'
-    ]);
+    elementOpen('ul', '', ['class', 'dawa-autocomplete-suggestions', 'role', 'listbox']);
     for (let i = 0; i < data.suggestions.length; ++i) {
       const suggestion = data.suggestions[i];
       let className = 'dawa-autocomplete-suggestion';
       if (data.selected === i) {
         className += ' dawa-selected';
       }
-      elementOpen(
-        'li',
-        '',
-        ['role', 'option'],
-        'class',
-        className,
-        'onmousedown',
-        e => {
-          onSelect(i);
-          e.preventDefault();
-        }
-      );
+      elementOpen('li', '', ['role', 'option'], 'class', className, 'onmousedown', e => {
+        onSelect(i);
+        e.preventDefault();
+      });
 
       if ('postnummer' in suggestion) {
         text(suggestion.tekst);
@@ -78,10 +57,7 @@ export const autocompleteUi = (inputElm, options) => {
   let lastEmittedText = '';
   let lastEmittedCaretpos = 0;
   const suggestionContainerElm = document.createElement('div');
-  inputElm.parentNode.insertBefore(
-    suggestionContainerElm,
-    inputElm.nextSibling
-  );
+  inputElm.parentNode.insertBefore(suggestionContainerElm, inputElm.nextSibling);
 
   const emitTextChange = (newText, newCaretpos) => {
     if (lastEmittedText !== newText || lastEmittedCaretpos !== newCaretpos) {
@@ -128,9 +104,7 @@ export const autocompleteUi = (inputElm, options) => {
       }
       //up (38)
       else if (key === 38) {
-        data.selected =
-          (data.selected - 1 + data.suggestions.length) %
-          data.suggestions.length;
+        data.selected = (data.selected - 1 + data.suggestions.length) % data.suggestions.length;
         update();
       }
       // enter
@@ -178,12 +152,7 @@ export const autocompleteUi = (inputElm, options) => {
           inputElm.setSelectionRange(data.caretpos, data.caretpos);
         }
         updateInput = false;
-        render(
-          suggestionContainerElm,
-          data,
-          i => selectSuggestion(i),
-          options.multiline
-        );
+        render(suggestionContainerElm, data, i => selectSuggestion(i), options.multiline);
       });
     }
   };
