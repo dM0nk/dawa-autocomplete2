@@ -14,7 +14,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DanmarksAdresser/dawa-autocomplete2.git"
+    "url": "https://github.com/dM0nk/dawa-autocomplete2.git"
   },
   "scripts": {
     "clean": "rimraf dist",
