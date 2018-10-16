@@ -50,7 +50,8 @@ export function dawaAutocomplete(inputElm, options) {
         if ('showCity' in controllerOptions && controllerOptions.showCity === false) {
           const streetNameAndNumber = selected.data.vejnavn + ' ' + selected.data.husnr;
           const floor = selected.data.etage ? selected.data.etage : null;
-          const door = selected.data.dør ? selected.data.dør : null;
+          var door_key = String.fromCharCode(100, 248, 114);
+          const door = selected.data[door_key] ? selected.data[door_key] : null;
 
           var street = streetNameAndNumber;
 
