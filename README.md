@@ -1,7 +1,15 @@
-# dawa-autocomplete2
+# dm0nk-autocomplete2
 
-DAWA Autocomplete2 is a JavaScript-component which makes it possible to enter a danish address in a single input field.
-The component uses [Danmarks Adressers WEB API](https://dawa.aws.dk).
+dm0nk Autocomplete2 is a fork of the JavaScript-component made by DAWA. The component uses [Danmarks Adressers WEB API](https://dawa.aws.dk).
+
+Therefore is the readme files pretty much identical...
+
+```
+RELEASE NOTES:
+0.14.1: Updated readme file
+0.14.0: Added completeType to the list of params.
+        Added functionality to make lookups for zipcode.
+```
 
 DAWA Autocomplete2 has no dependencies on other JavaScript-libraries. However, the component utilises
 several newer browser API's, so it is neccessary to load polyfills in older browsers such as IE11.
