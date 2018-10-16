@@ -106,6 +106,14 @@ export class AutocompleteController {
     let text, caretpos;
     if (request.selected) {
       const item = request.selected;
+
+      if ('postnummer' in request.selected) {
+        this.options.selectCallback(item);
+        this.selected = item;
+        this._requestCompleted();
+        return;
+      }
+
       if (item.type !== this.options.type) {
         adgangsadresseid = item.type === 'adgangsadresse' ? item.data.id : null;
         skipVejnavn = item.type === 'vejnavn';

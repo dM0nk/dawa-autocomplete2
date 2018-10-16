@@ -6,6 +6,8 @@ Therefore is the readme files pretty much identical...
 
 ```
 RELEASE NOTES:
+0.14.3: Fix selection bug on 'postnummer' type.
+0.14.2: Remove debug text in console
 0.14.1: Updated readme file
 0.14.0: Added completeType to the list of params.
         Added functionality to make lookups for zipcode.
