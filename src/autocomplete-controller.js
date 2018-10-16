@@ -1,11 +1,13 @@
 const formatParams = params => {
-  return Object.keys(params).map(paramName => {
-    const paramValue = params[paramName];
-    return `${paramName}=${encodeURIComponent(paramValue)}`;
-  }).join('&');
+  return Object.keys(params)
+    .map(paramName => {
+      const paramValue = params[paramName];
+      return `${paramName}=${encodeURIComponent(paramValue)}`;
+    })
+    .join('&');
 };
 
-const delay = ms => new Promise((resolve) => setTimeout(resolve, ms));
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const defaultOptions = {
   params: {},
@@ -20,16 +22,17 @@ const defaultOptions = {
     console.error('No initialRenderCallback supplied');
   },
   type: 'adresse',
+  completeType: 'adresse',
   baseUrl: 'https://dawa.aws.dk',
   adgangsadresserOnly: false,
   stormodtagerpostnumre: true,
   supplerendebynavn: true,
   fuzzy: true,
-  fetchImpl: (url, params) => fetch(`${url}?${formatParams(params)}`, {
-    mode: 'cors'
-  }).then(result => result.json())
+  fetchImpl: (url, params) =>
+    fetch(`${url}?${formatParams(params)}`, {
+      mode: 'cors'
+    }).then(result => result.json())
 };
-
 
 export class AutocompleteController {
   constructor(options) {
@@ -42,7 +45,14 @@ export class AutocompleteController {
     this.selected = null;
   }
 
-  _getAutocompleteResponse(text, caretpos, skipVejnavn, adgangsadresseid, supplerendebynavn, stormodtagerpostnumre) {
+  _getAutocompleteResponse(
+    text,
+    caretpos,
+    skipVejnavn,
+    adgangsadresseid,
+    supplerendebynavn,
+    stormodtagerpostnumre
+  ) {
     const params = Object.assign({}, this.options.params, {
       q: text,
       type: this.options.type,
@@ -61,19 +71,33 @@ export class AutocompleteController {
       params.startfra = 'adgangsadresse';
     }
 
-    return this.options.fetchImpl(`${this.options.baseUrl}/autocomplete`, params);
+    if (this.options.completeType === 'postnummer') {
+      const params = {
+        q: text,
+        side: 1,
+        per_side: 5
+      };
+
+      return this.options.fetchImpl(
+        `${this.options.baseUrl}/postnumre/autocomplete`,
+        params
+      );
+    }
+
+    return this.options.fetchImpl(
+      `${this.options.baseUrl}/autocomplete`,
+      params
+    );
   }
 
   _scheduleRequest(request) {
     if (this.state.currentRequest !== null) {
       this.state.pendingRequest = request;
-    }
-    else {
+    } else {
       this.state.currentRequest = request;
       this._executeRequest();
     }
   }
-
 
   _executeRequest() {
     const request = this.state.currentRequest;
@@ -87,15 +111,13 @@ export class AutocompleteController {
         skipVejnavn = item.type === 'vejnavn';
         text = item.tekst;
         caretpos = item.caretpos;
-      }
-      else {
+      } else {
         this.options.selectCallback(item);
         this.selected = item;
         this._requestCompleted();
         return;
       }
-    }
-    else {
+    } else {
       text = request.text;
       caretpos = request.caretpos;
     }
@@ -104,25 +126,35 @@ export class AutocompleteController {
         id: request.selectedId,
         type: this.options.type
       };
-      return this.options.fetchImpl(`${this.options.baseUrl}/autocomplete`, params)
+      return this.options
+        .fetchImpl(`${this.options.baseUrl}/autocomplete`, params)
         .then(
           result => this._handleResponse(request, result),
-          error => this._handleFailedRequest(request, error));
-    }
-    else if (request.selected || request.text.length >= this.options.minLength) {
-      this._getAutocompleteResponse(text, caretpos, skipVejnavn, adgangsadresseid, this.options.supplerendebynavn, this.options.stormodtagerpostnumre)
-        .then(
-          result => this._handleResponse(request, result),
-          error => this._handleFailedRequest(request, error ));
-    }
-    else {
+          error => this._handleFailedRequest(request, error)
+        );
+    } else if (
+      request.selected ||
+      request.text.length >= this.options.minLength
+    ) {
+      this._getAutocompleteResponse(
+        text,
+        caretpos,
+        skipVejnavn,
+        adgangsadresseid,
+        this.options.supplerendebynavn,
+        this.options.stormodtagerpostnumre
+      ).then(
+        result => this._handleResponse(request, result),
+        error => this._handleFailedRequest(request, error)
+      );
+    } else {
       this._handleResponse(request, []);
     }
   }
   _handleFailedRequest(request, error) {
     console.error('DAWA request failed', error);
     return delay(this.options.retryDelay).then(() => {
-      if(!this.state.pendingRequest) {
+      if (!this.state.pendingRequest) {
         this._scheduleRequest(request);
       }
       this._requestCompleted();
@@ -130,31 +162,28 @@ export class AutocompleteController {
   }
 
   _handleResponse(request, result) {
+    console.log(request, result);
     if (request.selected) {
       if (result.length === 1) {
         const item = result[0];
         if (item.type === this.options.type) {
           this.options.selectCallback(item);
-        }
-        else {
+        } else {
           if (!this.state.pendingRequest) {
             this.state.pendingRequest = {
               selected: item
             };
           }
         }
-      }
-      else if (this.options.renderCallback) {
+      } else if (this.options.renderCallback) {
         this.options.renderCallback(result);
       }
-    }
-    else if(request.selectedId) {
-      if(result.length === 1) {
+    } else if (request.selectedId) {
+      if (result.length === 1) {
         this.selected = result[0];
         this.options.initialRenderCallback(result[0].tekst);
       }
-    }
-    else {
+    } else {
       if (this.options.renderCallback) {
         this.options.renderCallback(result);
       }
@@ -169,7 +198,6 @@ export class AutocompleteController {
       this._executeRequest();
     }
   }
-
 
   setRenderCallback(renderCallback) {
     this.options.renderCallback = renderCallback;
@@ -204,7 +232,5 @@ export class AutocompleteController {
     this._scheduleRequest(request);
   }
 
-  destroy() {
-
-  }
+  destroy() {}
 }

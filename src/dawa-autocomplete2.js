@@ -1,23 +1,31 @@
-import {autocompleteUi} from './autocomplete-ui.js';
-import {AutocompleteController} from './autocomplete-controller.js';
+import { autocompleteUi } from './autocomplete-ui.js';
+import { AutocompleteController } from './autocomplete-controller.js';
 
 export function dawaAutocomplete(inputElm, options) {
-  options = Object.assign({select: () => null}, options);
-  const controllerOptions = ['baseUrl', 'minLength', 'params', 'fuzzy', 'stormodtagerpostnumre', 'supplerendebynavn'].reduce((memo, optionName)=> {
-    if(options.hasOwnProperty(optionName)) {
+  options = Object.assign({ select: () => null }, options);
+  const controllerOptions = [
+    'baseUrl',
+    'minLength',
+    'params',
+    'fuzzy',
+    'stormodtagerpostnumre',
+    'supplerendebynavn',
+    'completeType'
+  ].reduce((memo, optionName) => {
+    if (options.hasOwnProperty(optionName)) {
       memo[optionName] = options[optionName];
     }
     return memo;
   }, {});
-  if(options.adgangsadresserOnly) {
+  if (options.adgangsadresserOnly) {
     controllerOptions.type = 'adgangsadresse';
-  }
-  else {
+  } else {
     controllerOptions.type = 'adresse';
   }
+
   const controller = new AutocompleteController(controllerOptions);
   const ui = autocompleteUi(inputElm, {
-    onSelect: (suggestion) => {
+    onSelect: suggestion => {
       controller.select(suggestion);
     },
     onTextChange: (newText, newCaretpos) => {
@@ -32,7 +40,7 @@ export function dawaAutocomplete(inputElm, options) {
     options.select(selected);
   });
   controller.setInitialRenderCallback(text => ui.selectAndClose(text));
-  if(options.id) {
+  if (options.id) {
     controller.selectInitial(options.id);
   }
   return {
@@ -41,4 +49,3 @@ export function dawaAutocomplete(inputElm, options) {
     selected: () => controller.selected
   };
 }
-

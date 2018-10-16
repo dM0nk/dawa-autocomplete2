@@ -16,41 +16,55 @@ attributes.value = applyProp;
 
 const renderIncrementalDOM = (data, onSelect, multiline) => {
   if (data.suggestions.length > 0 && data.focused) {
-    elementOpen('ul', '', ['class', 'dawa-autocomplete-suggestions', 'role', 'listbox']);
+    elementOpen('ul', '', [
+      'class',
+      'dawa-autocomplete-suggestions',
+      'role',
+      'listbox'
+    ]);
     for (let i = 0; i < data.suggestions.length; ++i) {
       const suggestion = data.suggestions[i];
       let className = 'dawa-autocomplete-suggestion';
       if (data.selected === i) {
         className += ' dawa-selected';
       }
-      elementOpen('li', '', ['role', 'option'],
-        'class', className,
-        'onmousedown', (e) => {
+      elementOpen(
+        'li',
+        '',
+        ['role', 'option'],
+        'class',
+        className,
+        'onmousedown',
+        e => {
           onSelect(i);
           e.preventDefault();
-        });
-      let rows = suggestion.forslagstekst.split('\n');
-      rows = rows.map(row => row.replace(/ /g, '\u00a0'))
-      if(multiline) {
-        text(rows[0]);
-        for(let i = 1; i < rows.length; ++i) {
-          elementVoid('br');
-          text(rows[i]);
+        }
+      );
+
+      if ('postnummer' in suggestion) {
+        text(suggestion.tekst);
+      } else {
+        let rows = suggestion.forslagstekst.split('\n');
+        rows = rows.map(row => row.replace(/ /g, '\u00a0'));
+        if (multiline) {
+          text(rows[0]);
+          for (let i = 1; i < rows.length; ++i) {
+            elementVoid('br');
+            text(rows[i]);
+          }
+        } else {
+          text(rows.join(', '));
         }
       }
-      else {
-        text(rows.join(', '));
-      }
+
       elementClose('li');
     }
     elementClose('ul');
   }
 };
 
-
-
 const defaultRender = (containerElm, data, onSelect, multiline) => {
-  patch(containerElm, function () {
+  patch(containerElm, function() {
     renderIncrementalDOM(data, onSelect, multiline);
   });
 };
@@ -64,7 +78,10 @@ export const autocompleteUi = (inputElm, options) => {
   let lastEmittedText = '';
   let lastEmittedCaretpos = 0;
   const suggestionContainerElm = document.createElement('div');
-  inputElm.parentNode.insertBefore(suggestionContainerElm, inputElm.nextSibling);
+  inputElm.parentNode.insertBefore(
+    suggestionContainerElm,
+    inputElm.nextSibling
+  );
 
   const emitTextChange = (newText, newCaretpos) => {
     if (lastEmittedText !== newText || lastEmittedCaretpos !== newCaretpos) {
@@ -82,7 +99,7 @@ export const autocompleteUi = (inputElm, options) => {
     suggestions: []
   };
 
-  const handleInputChanged = (inputElm) => {
+  const handleInputChanged = inputElm => {
     const newText = inputElm.value;
     const newCaretPos = inputElm.selectionStart;
     data.caretpos = newCaretPos;
@@ -101,7 +118,7 @@ export const autocompleteUi = (inputElm, options) => {
     update(true);
   };
 
-  const keydownHandler = (e) => {
+  const keydownHandler = e => {
     const key = window.event ? e.keyCode : e.which;
     if (data.suggestions.length > 0 && data.focused) {
       // down (40)
@@ -111,20 +128,20 @@ export const autocompleteUi = (inputElm, options) => {
       }
       //up (38)
       else if (key === 38) {
-        data.selected = (data.selected - 1 + data.suggestions.length) % data.suggestions.length;
+        data.selected =
+          (data.selected - 1 + data.suggestions.length) %
+          data.suggestions.length;
         update();
       }
       // enter
       else if (key === 13 || key === 9) {
         selectSuggestion(data.selected);
-      }
-      else {
+      } else {
         return true;
       }
       e.preventDefault();
       return false;
     }
-
   };
 
   const focusHandler = () => {
@@ -145,8 +162,8 @@ export const autocompleteUi = (inputElm, options) => {
 
   let updateScheduled = false;
   let updateInput = false;
-  update = (shouldUpdateInput) => {
-    if(shouldUpdateInput) {
+  update = shouldUpdateInput => {
+    if (shouldUpdateInput) {
       updateInput = true;
     }
     if (!updateScheduled) {
@@ -156,12 +173,17 @@ export const autocompleteUi = (inputElm, options) => {
           return;
         }
         updateScheduled = false;
-        if(updateInput) {
+        if (updateInput) {
           inputElm.value = data.inputText;
           inputElm.setSelectionRange(data.caretpos, data.caretpos);
         }
         updateInput = false;
-        render(suggestionContainerElm, data, i => selectSuggestion(i), options.multiline);
+        render(
+          suggestionContainerElm,
+          data,
+          i => selectSuggestion(i),
+          options.multiline
+        );
       });
     }
   };
@@ -175,8 +197,7 @@ export const autocompleteUi = (inputElm, options) => {
     inputElm.removeEventListener('focus', focusHandler);
     inputElm.removeEventListener('input', inputChangeHandler);
     inputElm.removeEventListener('mouseup', inputMouseUpHandler);
-    patch(suggestionContainerElm, () => {
-    });
+    patch(suggestionContainerElm, () => {});
     suggestionContainerElm.remove();
   };
 
@@ -206,5 +227,5 @@ export const autocompleteUi = (inputElm, options) => {
     destroy,
     setSuggestions,
     selectAndClose
-  }
+  };
 };
